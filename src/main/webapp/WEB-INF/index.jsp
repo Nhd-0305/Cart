@@ -15,14 +15,14 @@
                 <th>Price</th>
                 <th></th>
             </tr>
-            <c:forEach items="${cdList}" var="cd">
+            <c:forEach items="${productList}" var="product">
                 <tr>
-                    <td>${cd.description}</td>
-                    <td><fmt:formatNumber value="${cd.price}" type="currency"/></td>
+                    <td>${product.name} - ${product.description}</td>
+                    <td><fmt:formatNumber value="${product.price}" type="currency" currencySymbol="$"/></td>
                     <td>
                         <form action="${pageContext.request.contextPath}/cart" method="post">
                             <input type="hidden" name="action" value="add">
-                            <input type="hidden" name="id" value="${cd.id}">
+                            <input type="hidden" name="productCode" value="${product.id}">
                             <input type="submit" value="Add To Cart">
                         </form>
                     </td>

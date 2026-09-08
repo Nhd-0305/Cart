@@ -1,6 +1,6 @@
 package servlet;
 
-import data.CDDB;
+import data.ProductDB;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -9,8 +9,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
-import model.CD;
+import java.util.ArrayList;
+import java.util.List;
 import model.Cart;
+import model.LineItem;
+import model.Product;
 
 @WebServlet("/cart")
 public class CartServlet extends HttpServlet {
@@ -34,16 +37,15 @@ public class CartServlet extends HttpServlet {
         String action = request.getParameter("action");
 
         if ("add".equals(action)) {
-            CD cd = CDDB.getCD(request.getParameter("id"));
-            if (cd != null) {
-                cart.add(cd);
-            }
+            int productId = Integer.parseInt(request.getParameter("productCode"));
+            cart.add(productId);
         } else if ("update".equals(action)) {
-            String id = request.getParameter("id");
+            int productId = Integer.parseInt(request.getParameter("productCode"));
             int quantity = Integer.parseInt(request.getParameter("quantity"));
-            cart.update(id, quantity);
+            cart.update(productId, quantity);
         } else if ("remove".equals(action)) {
-            cart.remove(request.getParameter("id"));
+            int productId = Integer.parseInt(request.getParameter("productCode"));
+            cart.remove(productId);
         } else if ("checkout".equals(action)) {
             session.removeAttribute("cart");
             RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/thanks.jsp");
@@ -59,6 +61,24 @@ public class CartServlet extends HttpServlet {
 
     private void showCart(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession();
+        Cart cart = (Cart) session.getAttribute("cart");
+
+        List<CartRow> cartRows = new ArrayList<>();
+        double cartTotal = 0;
+        if (cart != null) {
+            for (LineItem item : cart.getItems()) {
+                Product product = ProductDB.getProduct(item.getProductId());
+                if (product != null) {
+                    CartRow row = new CartRow(product, item.getQuantity());
+                    cartRows.add(row);
+                    cartTotal += row.getTotal();
+                }
+            }
+        }
+        request.setAttribute("cartRows", cartRows);
+        request.setAttribute("cartTotal", cartTotal);
+
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/cart.jsp");
         dispatcher.forward(request, response);
     }

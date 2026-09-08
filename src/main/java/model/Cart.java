@@ -1,50 +1,44 @@
 package model;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Cart implements Serializable {
-    private Map<String, CartItem> items = new LinkedHashMap<>();
+    private List<LineItem> items = new ArrayList<>();
 
-    public void add(CD cd) {
-        CartItem item = items.get(cd.getId());
-        if (item == null) {
-            items.put(cd.getId(), new CartItem(cd));
-        } else {
-            item.setQuantity(item.getQuantity() + 1);
+    public void add(int productId) {
+        for (LineItem item : items) {
+            if (item.getProductId() == productId) {
+                item.setQuantity(item.getQuantity() + 1);
+                return;
+            }
         }
+        items.add(new LineItem(productId, 1));
     }
 
-    public void update(String id, int quantity) {
+    public void update(int productId, int quantity) {
         if (quantity <= 0) {
-            remove(id);
+            remove(productId);
             return;
         }
-        CartItem item = items.get(id);
-        if (item != null) {
-            item.setQuantity(quantity);
+        for (LineItem item : items) {
+            if (item.getProductId() == productId) {
+                item.setQuantity(quantity);
+                return;
+            }
         }
     }
 
-    public void remove(String id) {
-        items.remove(id);
+    public void remove(int productId) {
+        items.removeIf(item -> item.getProductId() == productId);
     }
 
-    public Collection<CartItem> getItems() {
-        return items.values();
+    public List<LineItem> getItems() {
+        return items;
     }
 
     public boolean isEmpty() {
         return items.isEmpty();
-    }
-
-    public double getTotal() {
-        double total = 0;
-        for (CartItem item : items.values()) {
-            total += item.getTotal();
-        }
-        return total;
     }
 }

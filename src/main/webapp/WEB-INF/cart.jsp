@@ -11,7 +11,7 @@
         <h1>Your cart</h1>
 
         <c:choose>
-            <c:when test="${empty sessionScope.cart.items}">
+            <c:when test="${empty cartRows}">
                 <p>Your cart is empty.</p>
             </c:when>
             <c:otherwise>
@@ -23,28 +23,32 @@
                         <th>Amount</th>
                         <th></th>
                     </tr>
-                    <c:forEach items="${sessionScope.cart.items}" var="item">
+                    <c:forEach items="${cartRows}" var="row">
                         <tr>
                             <td>
                                 <form action="${pageContext.request.contextPath}/cart" method="post">
                                     <input type="hidden" name="action" value="update">
-                                    <input type="hidden" name="id" value="${item.cd.id}">
-                                    <input type="text" name="quantity" value="${item.quantity}" size="3">
+                                    <input type="hidden" name="productCode" value="${row.product.id}">
+                                    <input type="text" name="quantity" value="${row.quantity}" size="3">
                                     <input type="submit" value="Update">
                                 </form>
                             </td>
-                            <td>${item.cd.description}</td>
-                            <td><fmt:formatNumber value="${item.cd.price}" type="currency"/></td>
-                            <td><fmt:formatNumber value="${item.total}" type="currency"/></td>
+                            <td>${row.product.name} - ${row.product.description}</td>
+                            <td><fmt:formatNumber value="${row.product.price}" type="currency" currencySymbol="$"/></td>
+                            <td><fmt:formatNumber value="${row.total}" type="currency" currencySymbol="$"/></td>
                             <td>
                                 <form action="${pageContext.request.contextPath}/cart" method="post">
                                     <input type="hidden" name="action" value="remove">
-                                    <input type="hidden" name="id" value="${item.cd.id}">
+                                    <input type="hidden" name="productCode" value="${row.product.id}">
                                     <input type="submit" value="Remove Item">
                                 </form>
                             </td>
                         </tr>
                     </c:forEach>
+                    <tr>
+                        <td colspan="3" align="right"><strong>Total</strong></td>
+                        <td colspan="2"><fmt:formatNumber value="${cartTotal}" type="currency" currencySymbol="$"/></td>
+                    </tr>
                 </table>
 
                 <p><strong>To change the quantity</strong>, enter the new quantity and click on the Update button.</p>

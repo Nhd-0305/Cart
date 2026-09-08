@@ -1,19 +1,24 @@
 package model;
 
-
-public class CD {
-    private String id;
+public class Product {
+    private int id;
+    private String name;
     private String description;
     private double price;
 
-    public CD(String id, String description, double price) {
+    public Product(int id, String name, String description, double price) {
         this.id = id;
+        this.name = name;
         this.description = description;
         this.price = price;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getDescription() {
@@ -22,5 +27,5 @@ public class CD {
 
     public double getPrice() {
         return price;
-    }   
+    }
 }

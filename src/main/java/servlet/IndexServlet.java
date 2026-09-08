@@ -1,6 +1,6 @@
 package servlet;
 
-import data.CDDB;
+import data.ProductDB;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -15,7 +15,7 @@ public class IndexServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.setAttribute("cdList", CDDB.getCDs());
+        request.setAttribute("productList", ProductDB.getProducts());
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/index.jsp");
         dispatcher.forward(request, response);
     }
